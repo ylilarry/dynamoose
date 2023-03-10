@@ -177,8 +177,9 @@ ItemRetriever.prototype.getRequest = async function (this: ItemRetriever): Promi
 	if (this.getInternalProperties(internalProperties).settings.index) {
 		object.IndexName = this.getInternalProperties(internalProperties).settings.index;
 	} else if (this.getInternalProperties(internalProperties).internalSettings.typeInformation.type === "query") {
+		let useIndex = this.getInternalProperties(internalProperties).settings.index;
+		if (useIndex === undefined) {
 		const comparisonChart = await this.getInternalProperties(internalProperties).settings.condition.getInternalProperties(internalProperties).comparisonChart(model);
-
 		const indexSpec = utils.find_best_index(indexes, comparisonChart);
 		if (!indexSpec.tableIndex) {
 			if (!indexSpec.indexName) {
@@ -186,6 +187,9 @@ ItemRetriever.prototype.getRequest = async function (this: ItemRetriever): Promi
 			}
 
 			object.IndexName = indexSpec.indexName;
+			}
+		} else {
+			object.IndexName = useIndex;
 		}
 	}
 	function moveParameterNames (val, prefix): void {
